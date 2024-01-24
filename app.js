@@ -1,55 +1,88 @@
-// Create a "close" button and append it to each list item
-var myNodelist = document.getElementsByTagName("LI");
-var i;
-for (i = 0; i < myNodelist.length; i++) {
-  var span = document.createElement("SPAN");
-  var txt = document.createTextNode("\u00D7");
-  span.className = "close";
-  span.appendChild(txt);
-  myNodelist[i].appendChild(span);
+// app.js
+
+const apiEndpoint = 'https://fewd-todolist-api.onrender.com/tasks';
+const apiKey = '1152'; // Replace with your actual API key
+
+function fetchTasks() {
+    $.ajax({
+        url: `${apiEndpoint}?api_key=${apiKey}`,
+        method: 'GET',
+        success: function (tasks) {
+            updateTaskList(tasks);
+        }
+    });
 }
 
-// Click on a close button to hide the current list item
-var close = document.getElementsByClassName("close");
-var i;
-for (i = 0; i < close.length; i++) {
-  close[i].onclick = function() {
-    var div = this.parentElement;
-    div.style.display = "none";
-  }
-}
+function updateTaskList(response) {
+    const taskList = $('#taskList');
+    taskList.empty();
 
-// Add a "checked" symbol when clicking on a list item
-var list = document.querySelector('ul');
-list.addEventListener('click', function(ev) {
-  if (ev.target.tagName === 'LI') {
-    ev.target.classList.toggle('checked');
-  }
-}, false);
+    // Check if response contains a tasks property
+    if (response && response.tasks && Array.isArray(response.tasks)) {
+        const tasks = response.tasks;
 
-// Create a new list item when clicking on the "Add" button
-function newElement() {
-  var li = document.createElement("li");
-  var inputValue = document.getElementById("myInput").value;
-  var t = document.createTextNode(inputValue);
-  li.appendChild(t);
-  if (inputValue === '') {
-    alert("You must write something!");
-  } else {
-    document.getElementById("myUL").appendChild(li);
-  }
-  document.getElementById("myInput").value = "";
+        tasks.forEach(task => {
+            const taskItem = $(`<li>${task.content}</li>`);
+            const removeButton = $('<button>Remove</button>');
+            const markButton = $('<button>Mark Complete/Active</button>');
 
-  var span = document.createElement("SPAN");
-  var txt = document.createTextNode("\u00D7");
-  span.className = "close";
-  span.appendChild(txt);
-  li.appendChild(span);
+            removeButton.on('click', function () {
+                removeTask(task.id);
+            });
 
-  for (i = 0; i < close.length; i++) {
-    close[i].onclick = function() {
-      var div = this.parentElement;
-      div.style.display = "none";
+            markButton.on('click', function () {
+                markTask(task.id, !task.completed);
+            });
+
+            taskItem.append(removeButton, markButton);
+            taskList.append(taskItem);
+        });
+    } else {
+        // Handle the case where the response structure is unexpected
+        console.error('Unexpected response format:', response);
     }
-  }
 }
+
+
+
+function removeTask(taskId) {
+    $.ajax({
+        url: `${apiEndpoint}/${taskId}?api_key=${apiKey}`,
+        method: 'DELETE',
+        success: function () {
+            fetchTasks();
+        }
+    });
+}
+
+function markTask(taskId, isComplete) {
+    const action = isComplete ? 'mark_complete' : 'mark_active';
+
+    $.ajax({
+        url: `${apiEndpoint}/${taskId}/${action}?api_key=${apiKey}`,
+        method: 'PUT',
+        success: function () {
+            fetchTasks();
+        }
+    });
+}
+
+$('#addTask').on('click', function () {
+    const taskInput = $('#taskInput');
+    const newTask = taskInput.val().trim();
+
+    if (newTask !== '') {
+        $.ajax({
+            url: `${apiEndpoint}?api_key=${apiKey}`,
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ content: newTask, due: new Date().toISOString() }),
+            success: function () {
+                fetchTasks();
+                taskInput.val('');
+            }
+        });
+    }
+});
+
+fetchTasks();
