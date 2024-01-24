@@ -1,19 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ajax, jQuery, and API Example</title>
-  <script src="script.js"></script>
-  <link href="style.css" rel="stylesheet" type="text/css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>To Do List App</title>
 </head>
-
 <body>
-  <h1>API Example with Ajax and jQuery</h1>
-  <div id="data"></div>
 
+  <div id="myDIV" class="header">
+    <h2>My To Do List</h2>
+    <input type="text" id="myInput" placeholder="Title...">
+    <span onclick="newElement()" class="addBtn">Add</span>
+  </div>
+
+  <ul id="myUL">
+    <li>Hit the gym</li>
+    <li class="checked">Pay bills</li>
+    <li>Meet George</li>
+    <li>Buy eggs</li>
+    <li>Read a book</li>
+    <li>Organize office</li>
+  </ul>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="app.js"></script>
 </body>
-
 </html>
