@@ -5,23 +5,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ajax, jQuery, and API Example</title>
+  <script src="script.js"></script>
+  <link href="style.css" rel="stylesheet" type="text/css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
   <h1>API Example with Ajax and jQuery</h1>
   <div id="data"></div>
-  <script>
-    $(document).ready(function () {
-      $.ajax({
-        url: 'https://api.example.com/data',
-        type: 'GET',
-        success: function (response) {
-          $('#data').html(JSON.stringify(response));
-        }
-      });
-    });
-  </script>
+
 </body>
 
 </html>
